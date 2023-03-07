@@ -1,8 +1,8 @@
 defmodule Reader do
   use GenServer
 
-  def start(url) do
-    GenServer.start_link(__MODULE__, url: url)
+  def start() do
+    GenServer.start_link(__MODULE__, url: "http://localhost:4000/iot")
   end
 
   def init([url: url]) do
@@ -13,7 +13,7 @@ defmodule Reader do
 
   def handle_info(%HTTPoison.AsyncChunk{chunk: chunk}, _state) do
 
-    IO.puts "Received chunk: #{chunk}"
+    IO.puts("Received chunk: #{chunk}")
 
     {:noreply, nil}
   end
@@ -26,6 +26,11 @@ defmodule Reader do
 
   def handle_info(%HTTPoison.AsyncHeaders{} = headers, _state) do
     IO.puts "Connection headers: #{inspect headers}"
+    {:noreply, nil}
+  end
+
+  def handle_info(%HTTPoison.AsyncEnd{} = connection_end, _state) do
+    IO.puts "Connection end: #{inspect connection_end}"
     {:noreply, nil}
   end
 end
