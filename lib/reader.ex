@@ -1,8 +1,8 @@
 defmodule Reader do
   use GenServer
 
-  def start() do
-    GenServer.start_link(__MODULE__, url: "http://localhost:4000/iot")
+  def start_link(url) do
+    GenServer.start_link(__MODULE__, url: url)
   end
 
   def init([url: url]) do
@@ -13,7 +13,15 @@ defmodule Reader do
 
   def handle_info(%HTTPoison.AsyncChunk{chunk: chunk}, _state) do
 
-    IO.puts("Received chunk: #{chunk}")
+    "event: \"message\"\n\ndata: " <> message = chunk
+    {success, data} = Jason.decode(String.trim(message))
+
+    if success == :ok do
+      message = data["message"]
+      tweet = message["tweet"]
+      text = tweet["text"]
+      PrinterSuper.print(text)
+    end
 
     {:noreply, nil}
   end
