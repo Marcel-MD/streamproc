@@ -1,6 +1,9 @@
 defmodule Printer do
   use GenServer
 
+  @min_sleep_time 5
+  @max_sleep_time 50
+
   def start_link do
     GenServer.start_link(__MODULE__, [])
   end
@@ -14,7 +17,13 @@ defmodule Printer do
   end
 
   def handle_cast(msg, state) do
+    sleep_randomly()
     IO.puts "\n#{inspect msg}"
     {:noreply, state}
+  end
+
+  defp sleep_randomly do
+    sleep_time = :rand.uniform(@max_sleep_time - @min_sleep_time) + @min_sleep_time
+    Process.sleep(sleep_time)
   end
 end

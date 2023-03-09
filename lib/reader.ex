@@ -17,10 +17,11 @@ defmodule Reader do
     {success, data} = Jason.decode(String.trim(message))
 
     if success == :ok do
-      message = data["message"]
-      tweet = message["tweet"]
+      tweet = data["message"]["tweet"]
       text = tweet["text"]
+      hashtags = tweet["entities"]["hashtags"]
       PrinterSuper.print(text)
+      Enum.each(hashtags, fn hashtag -> Analyzer.analyze_hashtag(hashtag["text"]) end)
     end
 
     {:noreply, nil}
