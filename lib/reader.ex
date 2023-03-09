@@ -12,22 +12,10 @@ defmodule Reader do
   end
 
   def handle_info(%HTTPoison.AsyncChunk{chunk: chunk}, _state) do
-
-    "event: \"message\"\n\ndata: " <> message = chunk
-    {success, data} = Jason.decode(String.trim(message))
-
-    if success == :ok do
-      tweet = data["message"]["tweet"]
-      text = tweet["text"]
-      hashtags = tweet["entities"]["hashtags"]
-      PrinterSuper.print(text)
-      Enum.each(hashtags, fn hashtag -> Analyzer.analyze_hashtag(hashtag["text"]) end)
-    end
-
+    process_event(chunk)
     {:noreply, nil}
   end
 
-  # In addition to message chunks, we also may receive status changes etc.
   def handle_info(%HTTPoison.AsyncStatus{} = status, _state) do
     IO.puts "Connection status: #{inspect status}"
     {:noreply, nil}
@@ -41,5 +29,21 @@ defmodule Reader do
   def handle_info(%HTTPoison.AsyncEnd{} = connection_end, _state) do
     IO.puts "Connection end: #{inspect connection_end}"
     {:noreply, nil}
+  end
+
+  defp process_event("event: \"message\"\n\ndata: " <> message) do
+    {success, data} = Jason.decode(String.trim(message))
+
+    if success == :ok do
+      tweet = data["message"]["tweet"]
+      text = tweet["text"]
+      hashtags = tweet["entities"]["hashtags"]
+      PrinterSuper.print(text)
+      Enum.each(hashtags, fn hashtag -> Analyzer.analyze_hashtag(hashtag["text"]) end)
+    end
+  end
+
+  defp process_event(_corrupted_event) do
+    PrinterSuper.print(:kill)
   end
 end

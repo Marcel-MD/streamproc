@@ -16,6 +16,11 @@ defmodule Printer do
     GenServer.cast(pid, msg)
   end
 
+  def handle_cast(:kill, state) do
+    IO.puts("## Killing printer ##")
+    {:stop, :normal, state}
+  end
+
   def handle_cast(msg, state) do
     sleep_randomly()
     IO.puts "\n#{inspect msg}"
