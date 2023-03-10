@@ -4,7 +4,10 @@
 
 ## Description
 
-This project is a simple implementation of a stream processing system. It consumes SSE events from the docker image `alexburlacu/rtp-server:faf18x` with has to be ran exposing the port `4000`.
+This project is a simple implementation of a stream processing system. It consumes SSE events from a docker image.
+```bash
+$ docker run -p 4000:4000 alexburlacu/rtp-server:faf18x
+```
 
 ## Supervision Tree Diagram
 ![Diagram](https://github.com/Marcel-MD/streamproc/blob/main/tree.png)
