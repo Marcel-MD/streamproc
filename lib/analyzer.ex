@@ -4,6 +4,7 @@ defmodule Analyzer do
   @time 5
 
   def start_link do
+    IO.puts "Starting analyzer..."
     GenServer.start_link(__MODULE__, {:os.timestamp(), %{}}, name: __MODULE__)
   end
 

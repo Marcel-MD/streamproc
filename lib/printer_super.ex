@@ -13,15 +13,26 @@ defmodule PrinterSuper do
     children = Enum.map(1..args[:nr_of_workers], fn i ->
       %{
         id: i,
-        start: {Printer, :start_link, []}
+        start: {Printer, :start_link, [i]}
       }
     end)
+
+    children = children ++ [
+      %{
+        id: :load_balancer,
+        start: {LoadBalancer, :start_link, []}
+      },
+      %{
+        id: :analyzer,
+        start: {Analyzer, :start_link, []}
+      }
+    ]
 
     Supervisor.init(children, strategy: :one_for_one)
   end
 
   def print(msg) do
-    id = Enum.random(1..@nr_of_workers)
+    id = LoadBalancer.get_least_busy_worker()
     pid = get_worker_pid(id)
     Printer.print(pid, msg)
   end
