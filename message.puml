@@ -1,0 +1,16 @@
+@startuml
+
+participant "Analyzer" as A
+collections "Readers" as R
+participant "Printer Supervisor" as PS
+participant "Load Balancer" as LB
+collections "Printers" as P
+
+R -> PS: Tweet Text
+PS -> LB: Request Printer ID
+PS <-- LB: Printer ID
+PS -> P: Tweet Text
+LB <-- P: Release Printer ID
+R -> A: Tweet Hashtag
+
+@enduml
