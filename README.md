@@ -1,5 +1,5 @@
 # FAF.PTR16.1 -- Project 1
-> **Performed by:** Marcel Vlasenco, group FAF-203
+> **Performed by:** Marcel Vlasenco, group FAF-203  
 > **Verified by:** asist. univ. Alexandru Osadcenco
 
 ## Description
